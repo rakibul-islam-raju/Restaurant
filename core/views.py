@@ -2,6 +2,7 @@ from django.shortcuts import render
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.mixins import RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin
 from rest_framework.permissions import IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.generics import (ListCreateAPIView,
                                     CreateAPIView,
@@ -13,14 +14,26 @@ from .serializers import *
 from .permissions import *
 
 
-class ProfileView(RetrieveUpdateDestroyAPIView):
-    serializer_class = ProfileSerializer
+class UserProfileView(RetrieveUpdateDestroyAPIView):
+    serializer_class = UserSerializer
     permission_classes = [IsOwnerOrReadOnly]
-    lookup_field = 'owner'
+    lookup_field = 'user'
 
     def get_queryset(self):
         owner = self.kwargs['owner']
         return Profile.objects.filter(owner=owner)
+
+
+# class ProfileView(RetrieveModelMixin, UpdateModelMixin, DestroyModelMixin, APIView):
+
+#     def get(self, request, format=None):
+
+#     def retrieve(request, *args, **kwargs):
+    
+#     def update(request, *args, **kwargs):
+    
+#     def destroy(request, *args, **kwargs):
+
 
 
 class RestaurantView(RetrieveUpdateDestroyAPIView):
@@ -59,4 +72,4 @@ class ItemCategoryView(ListCreateAPIView):
     permission_classes = [IsAuthenticatedOrReadOnly] # TODO: change permission to isOwnerOrReadOnly
 
 
-# class CategoryDetailView(RetrieveUpdateDestroyAPIView):
+# class ItemCategoryDetailView(RetrieveUpdateDestroyAPIView):

@@ -40,10 +40,15 @@ INSTALLED_APPS = [
 
     # third party
     'rest_framework',
+    'rest_framework.authtoken',
+    'dj_rest_auth',
+    'allauth',
+    # 'allauth.account',
+    'dj_rest_auth.registration',
 
     # local
     'core.apps.CoreConfig',
-    # 'users.apps.UsersConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -133,7 +138,26 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 # Django rest_framework
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ]
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+AUTH_USER_MODEL = 'users.User'
+
+# REST_AUTH_REGISTER_SERIALIZERS = {
+#     'REGISTER_SERIALIZER': 'core.serializers.UserSerializer',
+# }
+
+# allauth config
+# LOGIN_REDIRECT_URL = '/'
+# ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+# ACCOUNT_EMAIL_VERIFICATION = 'none'
+# ACCOUNT_EMAIL_REQUIRED = True
+# ACCOUNT_CONFIRM_EMAIL_ON_GET = False
+
+# For JWT support
+# REST_USE_JWT = True
+# JWT_AUTH_COOKIE = 'my-app-auth'

@@ -1,37 +1,32 @@
 from django.db import models
 from django.urls import reverse
 from django.template.defaultfilters import slugify
-# from users.models import Restaurant
-from django.contrib.auth.models import User
-
-
-class Profile(models.Model):
-    owner = models.OneToOneField(User, to_field='username', on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
-    profile_pic = models.ImageField(upload_to='profiles', blank=True, null=True)
-    email = models.EmailField(max_length=100, unique=True)
-    phone = models.CharField(max_length=15, unique=True)
-    bio = models.TextField(max_length=150, blank=True, null=True)
-
-    def __str__(self):
-        return str(self.owner)
+from users.models import User
 
 
 class Restaurant(models.Model):
     owner = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
-    slug = models.SlugField(null=True, unique=True)
-    phone = models.CharField(max_length=15, unique=True)
-    email = models.EmailField(max_length=100, unique=True)
+    slug = models.SlugField(null=True, blank=True) # TODO: make Unique
+    phone = models.CharField(max_length=15)
+    email = models.EmailField(max_length=100)
     district = models.CharField(max_length=50)
     police_station = models.CharField(max_length=50)
     address_1 = models.CharField(max_length=50)
     address_2 = models.CharField(max_length=50, blank=True, null=True)
+    birthday_party = models.BooleanField(blank=True, null=True)
+    marrige_party = models.BooleanField(blank=True, null=True)
+    smoking_zone = models.BooleanField(blank=True, null=True)
+    business = models.BooleanField(blank=True, null=True)
+    conference = models.BooleanField(blank=True, null=True)
+    kids_zone = models.BooleanField(blank=True, null=True)
+    couple_space = models.BooleanField(blank=True, null=True)
+    Capacity = models.BooleanField(blank=True, null=True)
+    ac = models.BooleanField(blank=True, null=True)
+    washroom = models.BooleanField(blank=True, null=True)
 
     def __str__(self):
-        # return f'{str(self.owner)}\'s restaurant'
-        return self.slug
+        return str(self.owner)
 
     def get_absolute_url(self):
         return reverse('article_detail', kwargs={'slug': self.slug})
@@ -69,15 +64,18 @@ class Tag(models.Model):
 class Item(models.Model):
     category = models.ForeignKey(ItemCategory, on_delete=models.CASCADE)
     tag = models.ManyToManyField(Tag)
-    item = models.CharField(max_length=100,)
+    item_name = models.CharField(max_length=100)
+    quantity_or_size = models.CharField(max_length=50, blank=True, null=True)
     image = models.ImageField(upload_to='items')
     price = models.DecimalField(decimal_places=2, max_digits=5)
     discount_price = models.DecimalField(decimal_places=2, max_digits=5, blank=True, null=True)
+    is_parcel = models.BooleanField()
+    Perparing_time = models.DecimalField(decimal_places=0, max_digits=3, help_text='Minuites Only', blank=True, null=True)
     description = models.CharField(max_length=255, blank=True, null=True)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.item
+        return self.item_name
 
 
 class Contact(models.Model):
@@ -104,7 +102,7 @@ class ItemReview(models.Model):
 
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rating = models.CharField(max_length=1, default=3)
+    rating = models.CharField(max_length=1)
     text = models.TextField(max_length=250)
 
     def __str__(self):
@@ -124,7 +122,7 @@ class RestaurantReview(models.Model):
 
     restautant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rating = models.CharField(max_length=1, default=3)
+    rating = models.CharField(max_length=1)
     text = models.TextField(max_length=250)
 
     def __str__(self):

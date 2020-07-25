@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import *
-from .models import Profile, Restaurant
+from .models import Restaurant
 
 @admin.register(Restaurant)
 class RestaurantAdmin(admin.ModelAdmin):
@@ -9,7 +9,6 @@ class RestaurantAdmin(admin.ModelAdmin):
 
 
 
-admin.site.register(Profile)
 admin.site.register(Contact)
 admin.site.register(Tag)
 admin.site.register(ItemCategory)

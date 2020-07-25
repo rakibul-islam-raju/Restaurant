@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from users.models import User
 from .models import *
 
 
@@ -9,11 +10,9 @@ class RestaurantSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ProfileSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Profile
-        fields = '__all__'
+class UserSerializer(serializers.ModelSerializer):
+    model = User
+    fields = '__all__'
 
 
 
@@ -41,10 +40,10 @@ class ContactSerializer(serializers.ModelSerializer):
     # def create(self, validated_data):
     #     return Contact(**validated_data)
 
-    def save(self):
-        email = self.validated_data['email']
-        message = self.validated_data['message']
-        send_email(from=email, message=message)
+    # def save(self):
+    #     email = self.validated_data['email']
+    #     message = self.validated_data['message']
+    #     send_email(from=email, message=message)
 
 
 class ItemReviewSerilizer(serializers.ModelSerializer):

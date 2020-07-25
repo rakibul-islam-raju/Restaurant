@@ -1,41 +1,54 @@
-# from django.db import models
-# from django.urls import reverse
-# from django.template.defaultfilters import slugify
-# from django.contrib.auth.models import User
+from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.validators import UnicodeUsernameValidator
+from django.utils.translation import gettext_lazy as _
+from django.contrib.auth.models import UserManager
+from django.utils import timezone
 
 
-# class Profile(models.Model):
-#     owner = models.OneToOneField(User, to_field='username', on_delete=models.CASCADE)
-#     first_name = models.CharField(max_length=50)
-#     last_name = models.CharField(max_length=50)
-#     profile_pic = models.ImageField(upload_to='profiles', blank=True, null=True)
-#     email = models.EmailField(max_length=100, unique=True)
-#     phone = models.CharField(max_length=15, unique=True)
-#     bio = models.TextField(max_length=150, blank=True, null=True)
+class User(AbstractBaseUser, PermissionsMixin):
+    username_validator = UnicodeUsernameValidator()
 
-#     def __str__(self):
-#         return str(self.owner)
+    username = models.CharField(
+        _('username'),
+        max_length=150,
+        unique=True,
+        help_text=_('Required. 150 characters or fewer. Letters, digits and @/./+/-/_ only.'),
+        validators=[username_validator],
+        error_messages={
+            'unique': _("A user with that username already exists."),
+        },
+    )
+    first_name = models.CharField(_('first name'), max_length=30)
+    last_name = models.CharField(_('last name'), max_length=150)
+    email = models.EmailField(_('email address'), unique=True)
+    phone = models.CharField(max_length=50, unique=True)
+    picture = models.ImageField(blank=True, null=True, upload_to='profile_pics')
+    is_seller = models.BooleanField(default=False)
+    is_buyer = models.BooleanField(default=False)
+    is_staff = models.BooleanField(
+        _('staff status'),
+        default=False,
+        help_text=_('Designates whether the user can log into this admin site.'),
+    )
+    is_active = models.BooleanField(
+        _('active'),
+        default=True,
+        help_text=_(
+            'Designates whether this user should be treated as active. '
+            'Unselect this instead of deleting accounts.'
+        ),
+    )
+    date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
 
+    objects = UserManager()
+    
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
 
-# class Restaurant(models.Model):
-#     owner = models.OneToOneField(User, on_delete=models.CASCADE)
-#     name = models.CharField(max_length=50)
-#     slug = models.SlugField(null=True, unique=True)
-#     phone = models.CharField(max_length=15, unique=True)
-#     email = models.EmailField(max_length=100, unique=True)
-#     district = models.CharField(max_length=50)
-#     police_station = models.CharField(max_length=50)
-#     address_1 = models.CharField(max_length=50)
-#     address_2 = models.CharField(max_length=50, blank=True, null=True)
+    def get_full_name(self):
+        return self.first_name + self.last_name
 
-#     def __str__(self):
-#         # return f'{str(self.owner)}\'s restaurant'
-#         return self.slug
-
-#     def get_absolute_url(self):
-#         return reverse('article_detail', kwargs={'slug': self.slug})
-
-#     def save(self, *args, **kwargs):
-#         if not self.slug:
-#             self.slug = slugify(self.name)
-#         return super().save(*args, **kwargs)
+    def __str__(self):
+        return self.username
+    

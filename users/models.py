@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.contrib.auth.validators import UnicodeUsernameValidator
@@ -9,6 +10,7 @@ from django.utils import timezone
 class User(AbstractBaseUser, PermissionsMixin):
     username_validator = UnicodeUsernameValidator()
 
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, unique=True)
     username = models.CharField(
         _('username'),
         max_length=150,
@@ -24,8 +26,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(_('email address'), unique=True)
     phone = models.CharField(max_length=50, unique=True)
     picture = models.ImageField(blank=True, null=True, upload_to='profile_pics')
-    is_seller = models.BooleanField(default=False)
-    is_buyer = models.BooleanField(default=False)
+    is_buyer = models.BooleanField(default=False, blank=True, null=True)
+    is_seller = models.BooleanField(default=False, blank=True, null=True)
+    restaurant_name = models.CharField(max_length=100, blank=True, null=True, unique=True)
     is_staff = models.BooleanField(
         _('staff status'),
         default=False,

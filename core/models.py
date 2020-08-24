@@ -1,3 +1,4 @@
+import uuid
 from django.db import models
 from django.urls import reverse
 from django.template.defaultfilters import slugify
@@ -5,7 +6,7 @@ from users.models import User
 
 
 class Restaurant(models.Model):
-    owner = models.OneToOneField(User, on_delete=models.CASCADE)
+    owner = models.OneToOneField(User, blank=True, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=50)
     slug = models.SlugField(null=True, blank=True) # TODO: make Unique
     phone = models.CharField(max_length=15)
@@ -39,10 +40,11 @@ class Restaurant(models.Model):
 
 
 class ItemCategory(models.Model):
-    restaurent = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, unique=True)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
 
-    name = models.CharField(max_length=50, unique=True)
+    name = models.CharField(max_length=50)
     description = models.CharField(max_length=50, blank=True, null=True)
     image = models.ImageField(upload_to='categories', blank=True, null=True)
     is_active = models.BooleanField(default=True)
@@ -62,8 +64,12 @@ class Tag(models.Model):
 
 
 class Item(models.Model):
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, unique=True)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.ForeignKey(ItemCategory, on_delete=models.CASCADE)
     tag = models.ManyToManyField(Tag)
+    
     item_name = models.CharField(max_length=100)
     quantity_or_size = models.CharField(max_length=50, blank=True, null=True)
     image = models.ImageField(upload_to='items')
@@ -85,6 +91,8 @@ class Contact(models.Model):
     email = models.EmailField(max_length=254)
     subject = models.CharField(max_length=50)
     message = models.CharField(max_length=254)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
 
     def __str__(self):
         return self.subject

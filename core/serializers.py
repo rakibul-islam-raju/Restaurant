@@ -15,35 +15,33 @@ class UserSerializer(serializers.ModelSerializer):
     fields = '__all__'
 
 
-
 class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ItemCategory
-        fields = '__all__'
-        # exclude = ['is_active']
+        exclude = ['restaurant', 'owner', 'is_active']
 
 
 class ItemSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Item
-        exclude = ['is_active']
+        fields = ['category',
+                'item_name',
+                'quantity_or_size',
+                'image',
+                'price',
+                'discount_price',
+                'is_parcel',
+                'Perparing_time',
+                'description']
 
 
 class ContactSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Contact
-        fields = '__all__'
-
-    # def create(self, validated_data):
-    #     return Contact(**validated_data)
-
-    # def save(self):
-    #     email = self.validated_data['email']
-    #     message = self.validated_data['message']
-    #     send_email(from=email, message=message)
+        exclude = ['restaurant']
 
 
 class ItemReviewSerilizer(serializers.ModelSerializer):

@@ -1,26 +1,16 @@
 from rest_framework.generics import RetrieveUpdateDestroyAPIView
-
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .permissions import IsOwnerOrReadOnly
-from .serializers import *
+from .serializers import UserProfileSerializer, UserSerializer
 from .models import *
 
 
-class ProfileView(RetrieveUpdateDestroyAPIView):
-    serializer_class = ProfileSerializer
+class UserProfileView(RetrieveUpdateDestroyAPIView):
+    serializer_class = UserProfileSerializer
     permission_classes = [IsOwnerOrReadOnly]
-    lookup_field = 'owner'
+    lookup_field = 'username'
 
     def get_queryset(self):
-        owner = self.kwargs['owner']
-        return Profile.objects.filter(owner=owner)
-
-
-class RestaurantView(RetrieveUpdateDestroyAPIView):
-    serializer_class = RestaurantSerializer
-    permission_classes = [IsOwnerOrReadOnly]
-    lookup_field = 'slug'
-    queryset = Restaurant.objects.all()
-
-    def get_queryset(self):
-        slug = self.kwargs['slug']
-        return Restaurant.objects.filter(slug=slug)
+        username = self.kwargs['username']
+        uuid = self.kwargs['id']
+        return User.objects.filter(username=username, id=uuid)

@@ -8,15 +8,16 @@ urlpatterns = [
     # restaurant
     path('<slug>/', RestaurantView.as_view(), name='restaurant-info'),
     path('<slug>/contact/', ContactView.as_view(), name='restaurant-contact'),
+    path('<slug>/review/', RestaurantReviewView.as_view(), name='restaurant-review'),
     # categories
     path('<slug>/categories/', ItemCategoryListView.as_view(), name='restaurant-category'),
-    # TODO: change url from <name> to <pk>
     path('<slug>/categories/<id>/', ItemCategoryDetailView.as_view(), name='restaurant-category-detail'),
     # dashboard
     path('categories/create/', ItemCategoryCreateView.as_view(), name='restaurant-category-create'),
     # items
     path('<slug>/items/', ItemListview.as_view(), name='restaurant-items'),
-    path('<slug>/items/<id>/', ItemDetailView.as_view(), name='restaurant-item-detail'),
+    path('<slug>/item/<id>/', ItemDetailView.as_view(), name='restaurant-item-detail'),
+    path('<slug>/item/<id>/review/', ItemReviewView.as_view(), name='restaurant-item-review'),
     # dashboard
     path('items/create/', ItemCreateView.as_view(), name='restaurant-item-create'),
 ]

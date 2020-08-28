@@ -100,7 +100,7 @@ class Contact(models.Model):
 
 class ItemReview(models.Model):
 
-    Rating_CHOICES = (
+    RATING_CHOICES = (
         (1, 'Poor'),
         (2, 'Average'),
         (3, 'Good'),
@@ -108,19 +108,20 @@ class ItemReview(models.Model):
         (5, 'Excellent')
     )
 
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rating = models.CharField(max_length=1)
-    text = models.TextField(max_length=250)
+    rating = models.CharField(max_length=3, choices=RATING_CHOICES)
+    text = models.TextField(max_length=250, blank=True, null=True)
 
     def __str__(self):
-        return self.item
-    
+        return self.item.item_name
+
 
 
 class RestaurantReview(models.Model):
 
-    Rating_CHOICES = (
+    RATING_CHOICES = (
         (1, 'Poor'),
         (2, 'Average'),
         (3, 'Good'),
@@ -128,10 +129,10 @@ class RestaurantReview(models.Model):
         (5, 'Excellent')
     )
 
-    restautant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
+    restaurant = models.ForeignKey(Restaurant, on_delete=models.CASCADE)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    rating = models.CharField(max_length=1)
+    rating = models.CharField(max_length=3, choices=RATING_CHOICES)
     text = models.TextField(max_length=250)
 
     def __str__(self):
-        return self.restautant
+        return self.restaurant.name

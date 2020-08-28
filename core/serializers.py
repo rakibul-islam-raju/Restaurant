@@ -3,6 +3,11 @@ from users.models import User
 from .models import *
 
 
+class UserSerializer(serializers.ModelSerializer):
+    model = User
+    fields = '__all__'
+
+
 class RestaurantSerializer(serializers.ModelSerializer):
     
     class Meta:
@@ -10,9 +15,11 @@ class RestaurantSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class UserSerializer(serializers.ModelSerializer):
-    model = User
-    fields = '__all__'
+class RestaurantReviewSerilizer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RestaurantReview
+        fields = ['rating', 'text']
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -48,12 +55,4 @@ class ItemReviewSerilizer(serializers.ModelSerializer):
 
     class Meta:
         model = ItemReview
-        fields = '__all__'
-
-
-class RestaurantReviewSerilizer(serializers.ModelSerializer):
-
-    class Meta:
-        model = RestaurantReview
-        fields = '__all__'
-
+        fields = ['rating', 'text']

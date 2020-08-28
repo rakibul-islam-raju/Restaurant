@@ -36,10 +36,24 @@ class RestaurantView(RetrieveUpdateDestroyAPIView):
         return Restaurant.objects.filter(slug=slug)
 
 
+class RestaurantReviewView(CreateAPIView):
+    serializer_class = RestaurantReviewSerilizer
+    permission_classes = [IsAuthenticated, IsBuyer]
+    queryset = RestaurantReview.objects.all()
+
+    def perform_create(self, serializer):
+        slug = self.kwargs['slug']
+        try:
+            restaurant = Restaurant.objects.get(slug=slug)
+            serializer.save(restaurant=restaurant, user=self.request.user)
+        except Restaurant.DoesNotExist:
+            raise Http404
+
+
 class ContactView(CreateAPIView):
     serializer_class = ContactSerializer
     queryset = Contact.objects.all()
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsBuyer]
 
     def perform_create(self, serializer):
         slug = self.kwargs['slug']
@@ -114,3 +128,19 @@ class ItemDetailView(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = Item.objects.filter(is_active=True)
     lookup_field = 'id'
+
+
+class ItemReviewView(CreateAPIView):
+    serializer_class = ItemReviewSerilizer
+    permission_classes = [IsAuthenticated, IsBuyer]
+    queryset = Item.objects.all()
+
+    def perform_create(self, serializer):
+        slug = self.kwargs['slug']
+        _id = self.kwargs['id']
+        try:
+            restaurant = Restaurant.objects.get(slug=slug)
+            item = Item.objects.get(id=_id)
+            serializer.save(restaurant=restaurant, item=item, user=self.request.user)
+        except Restaurant.DoesNotExist or Item.DoesNotExist:
+            raise Http404
